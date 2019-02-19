@@ -10,11 +10,6 @@ import (
 )
 
 type SetPipelineCommand struct {
-	SkipInteractive  bool `short:"n"  long:"non-interactive"               description:"Skips interactions, uses default values"`
-	DisableAnsiColor bool `long:"no-color"               description:"Disable color output"`
-
-	CheckCredentials bool `long:"check-creds"  description:"Validate credential variables against credential manager"`
-
 	Pipeline flaghelpers.PipelineFlag `short:"p"  long:"pipeline"  required:"true"  description:"Pipeline to configure"`
 	Config   atc.PathFlag             `short:"c"  long:"config"    required:"true"  description:"Pipeline configuration file"`
 
@@ -22,6 +17,12 @@ type SetPipelineCommand struct {
 	YAMLVar []flaghelpers.YAMLVariablePairFlag `short:"y"  long:"yaml-var"  value-name:"[NAME=YAML]"    description:"Specify a YAML value to set for a variable in the pipeline"`
 
 	VarsFrom []atc.PathFlag `short:"l"  long:"load-vars-from"  description:"Variable flag that can be used for filling in template values in configuration from a YAML file"`
+
+	SkipInteractive  bool `short:"n"  long:"non-interactive"   description:"Skips interactions, uses default values"`
+	AllowNoChanges   bool `           long:"allow-no-changes"  description:"Set the pipeline even if no changes are detected."`
+	CheckCredentials bool `           long:"check-creds"       description:"Validate credential variables against credential manager"`
+
+	DisableAnsiColor bool `long:"no-color"  description:"Disable color output"`
 }
 
 func (command *SetPipelineCommand) Validate() error {
@@ -54,6 +55,7 @@ func (command *SetPipelineCommand) Execute(args []string) error {
 		PipelineName:     pipelineName,
 		Target:           target.Client().URL(),
 		SkipInteraction:  command.SkipInteractive,
+		AllowNoChanges:   command.AllowNoChanges,
 		CheckCredentials: command.CheckCredentials,
 	}
 

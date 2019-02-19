@@ -1099,6 +1099,24 @@ this is super secure
 					Expect(sess.ExitCode()).To(Equal(0))
 
 				})
+
+				Context("when invoked with --allow-no-changes", func() {
+					It("asks the user to apply the changes", func() {
+						flyCmd := exec.Command(flyPath, "-t", targetName, "set-pipeline", "--allow-no-changes", "-p", "awesome-pipeline", "-c", configFile.Name())
+
+						stdin, err := flyCmd.StdinPipe()
+						Expect(err).NotTo(HaveOccurred())
+
+						sess, err := gexec.Start(flyCmd, GinkgoWriter, GinkgoWriter)
+						Expect(err).NotTo(HaveOccurred())
+
+						Eventually(sess).Should(gbytes.Say(`apply configuration\? \[yN\]: `))
+						no(stdin)
+
+						<-sess.Exited
+						Expect(sess.ExitCode()).To(Equal(0))
+					})
+				})
 			})
 
 			Context("when the existing config is invalid", func() {

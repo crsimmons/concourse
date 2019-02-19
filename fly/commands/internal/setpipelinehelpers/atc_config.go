@@ -21,6 +21,7 @@ type ATCConfig struct {
 	Team             concourse.Team
 	Target           string
 	SkipInteraction  bool
+	AllowNoChanges   bool
 	CheckCredentials bool
 }
 
@@ -65,7 +66,7 @@ func (atcConfig ATCConfig) Set(yamlTemplateWithParams templatehelpers.YamlTempla
 		displayhelpers.ShowErrors("Error loading existing config", errorMessages)
 	}
 
-	if !diffExists {
+	if !atcConfig.AllowNoChanges && !diffExists {
 		fmt.Println("no changes to apply")
 		return nil
 	}
