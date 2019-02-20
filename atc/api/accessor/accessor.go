@@ -36,7 +36,7 @@ func (a *access) IsAuthorized(team string) bool {
 			}
 		}
 	}
-	return false
+	return true
 }
 
 func (a *access) HasPermission(role string) bool {
